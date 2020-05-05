@@ -5,6 +5,8 @@ import { sign } from 'jsonwebtoken';
 
 import User from '../models/User';
 
+import auth from '../config/auth';
+
 interface Request {
   email: string;
   password: string;
@@ -37,9 +39,11 @@ class AuthenticateUserService {
       throw new Error(AUTH_ERROR);
     }
 
-    const token = sign({}, '93b16bbd0dfdd7cbff3722b2551c0b01', {
+    const { expiresIn, secret } = auth.jwt;
+
+    const token = sign({}, secret, {
       subject: user.id,
-      expiresIn: '1d',
+      expiresIn,
     });
 
     return {
