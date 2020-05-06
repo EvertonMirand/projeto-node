@@ -6,6 +6,7 @@ import { sign } from 'jsonwebtoken';
 import User from '../models/User';
 
 import auth from '../config/auth';
+import AppError from '../errors/AppError';
 
 interface Request {
   email: string;
@@ -30,13 +31,13 @@ class AuthenticateUserService {
     });
 
     if (!user) {
-      throw new Error(AUTH_ERROR);
+      throw new AppError(AUTH_ERROR, 401);
     }
 
     const passwordMatched = await compare(password, user.password);
 
     if (!passwordMatched) {
-      throw new Error(AUTH_ERROR);
+      throw new AppError(AUTH_ERROR, 401);
     }
 
     const { expiresIn, secret } = auth.jwt;
